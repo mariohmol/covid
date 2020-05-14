@@ -2,8 +2,10 @@ const STORE = {
     population: [],
     covid: [],
     data: [],
-    sort: 'deathPop',
-    sortType: 1
+    sorted: [],
+    sort: 'deathPerMillion',
+    sortType: -1,
+    top: 50
 }
 const data = () => {
     $.getJSON("data/population.json", function (data) {
@@ -22,8 +24,16 @@ const data = () => {
                         ...c,
                         ...pop[c.country]
                     }
-                    newobj.deathPop = newobj.deaths ? parseInt(newobj.pop / newobj.deaths) : 0;
-                    newobj.deathPercWorld = newobj.percWorld ? newobj.deaths / newobj.percWorld : 0
+                    if (newobj.deaths) {
+                        newobj.deathPop = parseInt(newobj.pop / newobj.deaths);
+                        newobj.deathPerMillion = parseInt(newobj.deaths / (newobj.pop / 1000000));
+                        newobj.deathPercWorld = newobj.percWorld ? newobj.deaths / newobj.percWorld : 0;
+                    } else {
+                        newobj.deathPop = 0;
+                        newobj.deathPerMillion = 0;
+                        newobj.deathPercWorld = 0;
+                    }
+
                     STORE.data.push(newobj);
                 } else {
                     console.warn('Countr not found: ', c.country)
@@ -44,15 +54,16 @@ const start = () => {
 const render = () => {
     populateTable(true);
     populateTable(false);
+    makeBar();
 }
 const populateTable = (deaths = true) => {
     var items = [];
-    const data = STORE.data.sort((a, b) => a[STORE.sort] > b[STORE.sort] ? STORE.sortType : STORE.sortType * -1);
+    STORE.sorted = STORE.data.sort((a, b) => a[STORE.sort] > b[STORE.sort] ? STORE.sortType : STORE.sortType * -1);
     let count = 0;
-    $.each(data, function (key, val) {
-        if (deaths && !val.deaths) {
+    $.each(STORE.sorted, function (key, val) {
+        if (deaths && (!val[STORE.sort] || val[STORE.sort] < 2)) {
             return
-        } else if (!deaths && val.deaths) {
+        } else if (!deaths && val[STORE.sort]) {
             return;
         }
         count++;
@@ -65,7 +76,7 @@ const populateTable = (deaths = true) => {
             <td>${numFormat(val.recovered)}</td>
             <td>${numFormat(val.pop)}</td>
             <td>${val.percWorld}</td>
-            <td>${numFormat(val.deathPop)}</td>
+            <td>${numFormat(val.deathPerMillion)}</td>
             <td>${val.deathPercWorld}</td>
         </tr>
         
@@ -85,16 +96,11 @@ const numFormat = n => {
 }
 
 const main = () => {
-
-
     startLayout()
     listeners();
     data();
 }
-
 const listeners = () => {
-
-
     $('body').on('click', '#dataheader td', e => {
         const sort = $(e.target).data("id");
         if (sort === STORE.sort) {
@@ -103,7 +109,15 @@ const listeners = () => {
             STORE.sort = sort;
         }
         render();
-    })
+    });
+
+    $('body').on('change', '#changelimit', e => {
+        const val = e.target.value;
+        STORE.limit = val;
+        render();
+    });
+
+
 }
 
 const startLayout = () => {
@@ -123,6 +137,7 @@ const startLayout = () => {
     // Or with jQuery
 
     $('.dropdown-trigger').dropdown();
+    $('select').formSelect();
 
 }
 $(main)
