@@ -39,20 +39,26 @@ const makeBar = () => {
     };
 
 
-    var ctx = document.getElementById('canvas').getContext('2d');
-    window.myBar = new Chart(ctx, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            responsive: true,
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: ''
+    if(window.myBar){
+        myBar.data = barChartData;
+        myBar.update();
+    }else{
+        var ctx = document.getElementById('canvas').getContext('2d');
+        window.myBar = new Chart(ctx, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: ''
+                }
             }
-        }
-    });
+        });
+    }
+    
 
 }

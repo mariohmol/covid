@@ -51,10 +51,33 @@
         </ul>
 
 
-        <div class="input-field col s3">
-            <input type="range" id="changelimit" min="0" max="200" />
-            <label>Limit the number results</label>
-          </div>
+        <h2 id="filterTitle" class="center"></h2>
+        <div class="row">
+            <div class="input-field col s3">
+                <label>Limit the number results</label>
+
+                <input type="range" id="changelimit" min="0" max="200" />
+                
+            </div>
+
+            <div class="input-field col s2"></div>
+            <div class="input-field col s3">
+                <select id="sortby">
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="country">Country</option>
+                    <option value="cases">Cases</option>
+                    <option value="deaths">Deaths</option>
+                    <option value="recovered">Recovered</option>
+                    <option value="pop">Population</option>
+                    <option value="percWorld">World Population(%)</option>
+                    <option value="deathPerMillion" class=" tooltipped" data-position="bottom" data-tooltip="One death for each
+                    X people. Higher numbers are good!">Deaths per Million</option>
+                    <option value="deathPercWorld">Deaths by Perc World Pop</option>
+                </select>
+                <label>Sort By</label>
+            </div>
+        </div>
+
 
         <div id="container" style="width: 100%;">
             <canvas id="canvas"></canvas>

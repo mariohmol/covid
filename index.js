@@ -5,7 +5,7 @@ const STORE = {
     sorted: [],
     sort: 'deathPerMillion',
     sortType: -1,
-    top: 50
+    limit: 50
 }
 const data = () => {
     $.getJSON("data/population.json", function (data) {
@@ -55,6 +55,7 @@ const render = () => {
     populateTable(true);
     populateTable(false);
     makeBar();
+    $('#filterTitle').html(`Data by ${STORE.sort} in ${STORE.sortType > 0 ? 'Ascending' : 'Descending'}`)
 }
 const populateTable = (deaths = true) => {
     var items = [];
@@ -114,6 +115,18 @@ const listeners = () => {
     $('body').on('change', '#changelimit', e => {
         const val = e.target.value;
         STORE.limit = val;
+        render();   
+    });
+
+    $('body').on('change', '#sortby', e => {
+        const val = e.target.value;
+        STORE.sort = val;
+        render();
+    });
+
+    $('body').on('change', '#sortOrder', e => {
+        const val = e.target.value;
+        STORE.sortType = val;
         render();
     });
 
