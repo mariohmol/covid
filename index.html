@@ -13,7 +13,7 @@
 
         <nav>
             <div class="nav-wrapper container">
-                <a href="#" class="brand-logo">Covid Numbers</a>
+                <a href="#" class="brand-logo">Covid Numbers updated 14/05/2020</a>
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
                     <li><a href="#data">Data</a></li>
                     <li><a href="#source">Source</a></li>
@@ -30,19 +30,63 @@
 
         <h1 class="center">Covid Numbers</h1>
 
-
         <h2>Data</h2>
+
+        <!-- Dropdown Trigger -->
+        <a class='dropdown-trigger btn' href='#' data-target='dropdown1'>Get some insights</a>
+
+
+
+
+        <!-- Dropdown Structure -->
+        <ul id='dropdown1' class='dropdown-content'>
+            <li><a href="#!" onClick="STORE.sort = 'deathPop'; STORE.sortType = -1; render();">
+                    Better countries (lowest deaths by size of population)</a></li>
+            <li><a href="#!" onClick="STORE.sort = 'deathPop'; STORE.sortType = 1; render();">
+                    Worst countries ( high deaths by size of population)</a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li><a href="#!" onClick="STORE.sort = 'deaths'; STORE.sortType = -1; render();">
+                    More deaths ( not necessary the worst, depends size of pop)</a></li>
+            <li><a href="#!" onClick="STORE.sort = 'deaths'; STORE.sortType = 1; render();">
+                    Less deaths ( not necessary the best, depends size of pop)</a></li>
+            <!-- <li><a href="#!">three</a></li>
+    <li><a href="#!"><i class="material-icons">view_module</i>four</a></li>
+    <li><a href="#!"><i class="material-icons">cloud</i>five</a></li> -->
+        </ul>
+
+
         <table id="data">
             <thead>
-                <tr>
-                    <td>Country</td>
-                    <td>Cases</td>
-                    <td>Deaths</td>
-                    <td>Recovered</td>
-                    <td>Population</td>
-                    <td>World Population(%)</td>
-                    <td>Population / Deaths</td>
-                    <td>Deaths by Perc World Pop</td>
+                <tr id="dataheader">
+                    <td>Order</td>
+                    <td data-id="country">Country</td>
+                    <td data-id="cases">Cases</td>
+                    <td data-id="deaths">Deaths</td>
+                    <td data-id="recovered">Recovered</td>
+                    <td data-id="pop">Population</td>
+                    <td data-id="percWorld">World Population(%)</td>
+                    <td data-id="deathPop" class=" tooltipped" data-position="bottom" data-tooltip="One death for each
+                    X people. Higher numbers are good!">Population / Deaths</td>
+                    <td data-id="deathPercWorld">Deaths by Perc World Pop</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+
+        <h2>Countries with No Deaths Data</h2>
+        <table id="datano">
+            <thead>
+                <tr id="datanoheader">
+                    <td>Order</td>
+                    <td data-id="country">Country</td>
+                    <td data-id="cases">Cases</td>
+                    <td data-id="deaths">Deaths</td>
+                    <td data-id="recovered">Recovered</td>
+                    <td data-id="pop">Population</td>
+                    <td data-id="percWorld">World Population(%)</td>
+                    <td data-id="deathPop">Population / Deaths</td>
+                    <td data-id="deathPercWorld">Deaths by Perc World Pop</td>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -54,7 +98,7 @@
             <h2>Source</h2>
             <ul>
                 <li>
-                   Convid Numbers: https://en.wikipedia.org/wiki/COVID-19_pandemic_by_country_and_territory
+                    Convid Numbers: https://en.wikipedia.org/wiki/COVID-19_pandemic_by_country_and_territory
                 </li>
                 <li>
                     Population Numbers: https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population

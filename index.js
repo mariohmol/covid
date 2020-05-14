@@ -1,7 +1,9 @@
 const STORE = {
     population: [],
     covid: [],
-    data: []
+    data: [],
+    sort: 'deathPop',
+    sortType: 1
 }
 const data = () => {
     $.getJSON("data/population.json", function (data) {
@@ -16,10 +18,13 @@ const data = () => {
 
             STORE.covid.forEach(c => {
                 if (pop[c.country]) {
-                    STORE.data.push({
+                    const newobj = {
                         ...c,
                         ...pop[c.country]
-                    });
+                    }
+                    newobj.deathPop = newobj.deaths ? parseInt(newobj.pop / newobj.deaths) : 0;
+                    newobj.deathPercWorld = newobj.percWorld ? newobj.deaths / newobj.percWorld : 0
+                    STORE.data.push(newobj);
                 } else {
                     console.warn('Countr not found: ', c.country)
                 }
@@ -32,38 +37,92 @@ const data = () => {
 }
 
 const start = () => {
-
-    populateTable();
+    render();
     console.log(STORE)
 }
-const populateTable = () => {
-    var items = [];
 
-    $.each(STORE.data, function (key, val) {
+const render = () => {
+    populateTable(true);
+    populateTable(false);
+}
+const populateTable = (deaths = true) => {
+    var items = [];
+    const data = STORE.data.sort((a, b) => a[STORE.sort] > b[STORE.sort] ? STORE.sortType : STORE.sortType * -1);
+    let count = 0;
+    $.each(data, function (key, val) {
+        if (deaths && !val.deaths) {
+            return
+        } else if (!deaths && val.deaths) {
+            return;
+        }
+        count++;
         items.push(`
         <tr>
+            <td>${count}</td>
             <td>${val.country}</td>
             <td>${numFormat(val.cases)}</td>
             <td>${numFormat(val.deaths)}</td>
             <td>${numFormat(val.recovered)}</td>
             <td>${numFormat(val.pop)}</td>
             <td>${val.percWorld}</td>
-            <td>${val.deaths ? parseInt(val.pop / val.deaths).toLocaleString() : 0}</td>
-            <td>${val.percWorld ? val.deaths / val.percWorld : 0}</td>
+            <td>${numFormat(val.deathPop)}</td>
+            <td>${val.deathPercWorld}</td>
         </tr>
         
         `);
     });
-    console.log(items)
-    $("#data tbody").html(items.join(''));
+    if (deaths) {
+        $("#data tbody").html(items.join(''));
+    } else {
+        $("#datano tbody").html(items.join(''));
+    }
+
 }
 
-const numFormat = n =>{
-    if(!n) return null;
+const numFormat = n => {
+    if (!n) return null;
     return n.toLocaleString();
 }
 
 const main = () => {
+
+
+    startLayout()
+    listeners();
     data();
+}
+
+const listeners = () => {
+
+
+    $('body').on('click', '#dataheader td', e => {
+        const sort = $(e.target).data("id");
+        if (sort === STORE.sort) {
+            STORE.sortType *= -1;
+        } else {
+            STORE.sort = sort;
+        }
+        render();
+    })
+}
+
+const startLayout = () => {
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.tooltipped');
+        var instances = M.Tooltip.init(elems, options);
+    });
+
+    $('.tooltipped').tooltip();
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.dropdown-trigger');
+        var instances = M.Dropdown.init(elems, options);
+    });
+
+    // Or with jQuery
+
+    $('.dropdown-trigger').dropdown();
+
 }
 $(main)
